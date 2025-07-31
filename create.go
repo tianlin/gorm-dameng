@@ -31,23 +31,6 @@ func Create(db *gorm.DB) {
 		onConflict, hasConflict = c.Expression.(clause.OnConflict)
 
 		if hasConflict {
-			if len(db.Statement.Schema.PrimaryFields) > 0 {
-				columnsMap := map[string]bool{}
-				for _, column := range values.Columns {
-					columnsMap[column.Name] = true
-				}
-
-				for _, field := range db.Statement.Schema.PrimaryFields {
-					if _, ok := columnsMap[field.DBName]; !ok {
-						hasConflict = false
-					}
-				}
-			} else {
-				hasConflict = false
-			}
-		}
-
-		if hasConflict {
 			MergeCreate(db, onConflict, values)
 		} else {
 			setIdentityInsert := false
